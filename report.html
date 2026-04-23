@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Report Issue | CityFix</title>
+
+<style>
+body{
+  margin:0;
+  font-family:"Segoe UI", Arial, sans-serif;
+  background:#f4f6f8;
+  color:#333;
+}
+
+/* HEADER */
+.header{
+  background:#1f3c88;
+  color:white;
+  padding:14px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+.logo{
+  font-size:22px;
+  font-weight:700;
+}
+.navbar a{
+  color:white;
+  text-decoration:none;
+  margin-left:18px;
+  font-weight:500;
+}
+.navbar a:hover{
+  text-decoration:underline;
+}
+
+/* CONTAINER */
+.container{
+  max-width:950px;
+  background:white;
+  margin:30px auto;
+  padding:30px;
+  border-radius:10px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+h2{
+  text-align:center;
+  color:#1f3c88;
+}
+
+label{
+  font-weight:600;
+  margin-top:15px;
+  display:block;
+}
+
+input, select, textarea{
+  width:100%;
+  padding:10px;
+  margin-top:6px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+textarea{
+  height:90px;
+}
+
+/* WARD BOXES */
+.ward-numbers{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:10px;
+}
+
+.ward-box{
+  padding:8px 14px;
+  border:2px solid #1f3c88;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+  background:#f4f7ff;
+}
+
+.ward-box:hover,
+.ward-box.active{
+  background:#1f3c88;
+  color:white;
+}
+
+#wardInfo{
+  margin-top:15px;
+  padding:15px;
+  background:#f8f9fb;
+  border-radius:8px;
+}
+
+/* ISSUE GRID */
+.issue-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:10px;
+  margin-top:10px;
+}
+
+.issue-grid label{
+  background:#eef1f6;
+  padding:8px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+button{
+  margin-top:25px;
+  width:100%;
+  background:#1f3c88;
+  color:white;
+  padding:12px;
+  border:none;
+  border-radius:6px;
+  font-size:16px;
+  cursor:pointer;
+}
+
+footer{
+  background:#1f3c88;
+  color:white;
+  text-align:center;
+  padding:14px;
+  margin-top:40px;
+}
+</style>
+</head>
+
+<body>
+
+
+<header class="header">
+    <div class="logo">
+        🏙️ <span>CityFix</span>
+    </div>
+
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('ward') }}">Ward</a>
+        <a href="{{ url_for('report_issue') }}">Report Issue</a>
+        <a href="{{ url_for('my_complaints') }}">My Complaints</a>
+
+        {% if username %}
+            <span class="user">👋 {{ username }}</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </nav>
+</header>>
+
+<div class="container">
+<h2>Report an Issue</h2>
+
+<form method="POST" action="/report-issue" enctype="multipart/form-data">
+
+<label>Full Name</label>
+<input type="text" name="name" placeholder="Enter your Full Name" required>
+
+<label>Mobile Number</label>
+<input type="tel" name="mobile" pattern="[6-9]{1}[0-9]{9}"placeholder="9776384698" required>
+
+<label>Email</label>
+<input type="email" name="email" placeholder="xyz@gmail.com" required>
+
+<label>Date</label>
+<input type="date" name="date" required>
+
+<!-- WARD LETTER -->
+<label>Select Ward</label>
+<select id="wardLetter" onchange="loadWardNumbers()" required>
+<option value="">Select Ward</option>
+<option>A</option><option>B</option><option>C</option><option>D</option>
+<option>E</option><option>F</option><option>G</option><option>H</option>
+<option>K</option><option>L</option><option>M</option><option>N</option>
+<option>P</option><option>R</option><option>S</option><option>T</option>
+</select>
+
+<!-- WARD NUMBERS -->
+<label>Ward Numbers</label>
+<div id="wardNumbers" class="ward-numbers"></div>
+
+<!-- INFO -->
+<div id="wardInfo"><p>Select a ward number.</p></div>
+
+<!-- Hidden values -->
+<input type="hidden" name="ward" id="wardInput">
+<input type="hidden" name="ward_no" id="wardNoInput">
+
+<label>Select Issue Type</label>
+<div class="issue-grid">
+<label><input type="checkbox" name="issues" value="Garbage"> Garbage Overflow</label>
+<label><input type="checkbox" name="issues" value="Pothole"> Potholes</label>
+<label><input type="checkbox" name="issues" value="Water"> Water Leakage</label>
+<label><input type="checkbox" name="issues" value="Light"> Street Light Issue</label>
+<label><input type="checkbox" name="issues" value="Drainage"> Drainage</label>
+<label><input type="checkbox" name="issues" value="Other"> Traffic Signal Problem</label>
+<label><input type="checkbox" name="issues" value="Other">  Illegal Construction</label>
+<label><input type="checkbox" name="issues" value="Other">  Stray Animal Issue</label>
+<label><input type="checkbox" name="issues" value="Other">  Open Manhole</label>
+<label><input type="checkbox" name="issues" value="Other">Tree Fallen</label>
+<label><input type="checkbox" name="issues" value="Other"> Noise Pollution</label>
+<label><input type="checkbox" name="issues" value="Other"> Water Supply Issue</label>
+<label><input type="checkbox" name="issues" value="Other"> Public Toilet Issue</label>
+<label><input type="checkbox" name="issues" value="Other"> Road Encroachment</label>
+<label><input type="checkbox" name="issues" value="Other"> Electricity Issue</label>
+<label><input type="checkbox" name="issues" value="Other">  Other Civic Issues</label>
+</div>
+
+<label>Address</label>
+<input type="text" name="address" required>
+
+<label>Landmark</label>
+<input type="text" name="Landmark" required>
+
+<label>Pincode</label>
+<input type="text" name="pincode" pattern="[0-9]{6}" placeholder="6 digit pincode" required>
+
+<label>Issue Description</label>
+<textarea name="description" required></textarea>
+
+
+<label>Upload Image</label>
+<input type="file" name="image" accept="image/*">
+
+<button type="submit">Submit Issue</button>
+</form>
+</div>
+
+<footer>Municipal Corporation of Mumbai © All Rights Reserved</footer>
+
+<script>
+/* ================= FULL WARD DATA ================= */
+const wardData = {
+A:{wards:{
+224:"Mahatma Phule Market – Churchgate – Museum – Indira Docks",
+225:"Brabourm Stadium – Colaba Market – Gateway of India",
+226:"Sasoon Docks – World Trade Centre – Geeta Nagar",
+227:"R.C. Church – Colaba Dandi – Navy Nagar"}},
+
+B:{wards:{
+221:"Imamwada – Dongri",
+222:"Bengalipura – Princess Dock",
+223:"Musafir Khana – Victoria Docks"}},
+
+C:{wards:{
+217:"Durgadevi Udyan – Madhav Baug – Bhuleshwar",
+218:"Chandanwadi – Chirabazar – Gymkhanas",
+219:"Mumbadevi – Mulji Jetha Market – Dhobi Talao",
+220:"Khara Talao – Null Bazar – Ghoghari Mohalla"}},
+
+D:{wards:{
+210:"Bellasis Chawls – Navjivan Society",
+211:"Wellington Sports Club – Bhatia Hospital",
+212:"Mahalaxmi – Air Conditioned Market – Oomar Park",
+213:"Priyadarshini Garden – August Kranti Maidan",
+214:"Kamla Nehru Park – Raj Bhavan",
+215:"Prarthana Samaj – Opera House",
+216:"Harkisandas Hospital – Khetwadi"}},
+
+E:{wards:{
+202:"Veer Jijamata Udyan – Ghodapdeo – Mazagaon (N)",
+203:"Kasturba Hospital – India United Mills",
+204:"Byculla Station – Housing Quarters",
+205:"Nair Hospital – Fire Brigade",
+206:"Mazagaon Court – Madanpura",
+207:"Anjirwadi – Dockyards – Mazagaon (S)",
+208:"Mastan Tank – JJ Hospital",
+209:"Kamathipura"}},
+
+F:{wards:{
+165:"Pratiksha Nagar – Sion",
+166:"Salt Pans – Transit Camp",
+167:"Lokmanya Tilak Hospital",
+168:"Rawli Hill",
+169:"CGS Colony",
+170:"Antop Hill",
+171:"Sangam Nagar",
+172:"Wadala Salt Pans",
+173:"BPT Hospital Colony",
+174:"Hindu Colony",
+195:"Naigaon BDD Chawls",
+196:"Naigaon Parade Ground",
+197:"Bhoiwada",
+198:"Nare Park",
+199:"KEM Hospital",
+200:"Abhyudaya Nagar",
+201:"Cotton Green"}},
+
+G:{wards:{
+175:"Mahim Kala Killa",
+176:"Dharavi Transit Camp",
+177:"Mukund Nagar",
+178:"Western Tanneries",
+179:"Mahim Labour Camp",
+180:"Shahu Nagar",
+181:"Mahim Fort",
+182:"Shitladevi – Hinduja",
+183:"Ruparel College",
+184:"Dadar Station",
+185:"Shivaji Park",
+186:"Railway Workshop",
+187:"Prabhadevi",
+188:"Worli Village",
+189:"Worli Dairy",
+190:"Worli BDD",
+191:"Dawn Mills",
+192:"Race Course",
+193:"Arthur Road Jail",
+194:"Parel BDD"}},
+
+H:{wards:{
+81:"Prabhat Colony",
+82:"Vivekanand Nagar",
+83:"University Campus",
+84:"Kalina",
+85:"Bharat Nagar (E)",
+86:"Santacruz East",
+87:"Khar Rifle Range",
+88:"Teachers Colony",
+89:"Govt Colony",
+90:"Bandra Terminus",
+91:"Kherwadi",
+92:"Khira Nagar",
+93:"Madhu Park",
+94:"Khar Danda",
+95:"Union Park",
+96:"Bandra Fort",
+97:"Lilavati Hospital"}},
+
+K:{wards:{
+53:"Oshiwara",
+54:"Tarapore Garden",
+55:"Swami Samarth Nagar",
+56:"Versova North",
+57:"Amboli Hill",
+58:"Sports Complex",
+59:"Seven Bunglows",
+60:"Bhavans College",
+61:"Gilbert Hill",
+62:"Lallubhai Park",
+63:"Cooper Hospital",
+64:"SNDT University",
+65:"Mithibai College",
+66:"Bandrekar Wadi",
+67:"Jogeshwari Caves",
+68:"Meghwadi",
+69:"Shankarwadi",
+70:"Tolani College",
+71:"Gundavli West",
+72:"Gundavli East",
+73:"MIDC",
+74:"Bhavani Nagar",
+75:"Sahar Airport",
+76:"Chakala",
+77:"Bamanwada",
+78:"Coal Dongri",
+79:"Vile Parle East",
+80:"Telephone Exchange"}},
+
+L:{wards:{
+150:"Chandivli West",
+151:"Chandivli East",
+152:"Mohili",
+153:"Asalpha",
+154:"Saki Naka",
+155:"Jari Mari",
+156:"Premier Automobiles",
+157:"Wadia Estate",
+158:"Kurla Village",
+159:"Vinoba Bhave Nagar",
+160:"Kurla Terminus",
+161:"Shikshak Nagar",
+162:"Nehru Nagar",
+163:"Everard Nagar",
+164:"Swadesh Mill"}},
+
+M:{wards:{
+129:"Lotus Colony",
+130:"Shivaji Nagar 1",
+131:"Baiganwadi",
+132:"Shivaji Nagar 2W",
+133:"Shivaji Nagar 2E",
+134:"Mankhurd",
+135:"Chitta Camp",
+136:"BARC",
+137:"New Gautam Nagar",
+138:"Deonar Slaughter",
+139:"Childrens Home",
+140:"RCF Township",
+141:"Anik",
+142:"Mahul",
+143:"Sindhi Society",
+144:"Basant Park",
+145:"Sahakar Nagar",
+146:"Subhash Nagar",
+147:"Borla",
+148:"Jyoti Nagar",
+149:"Tilak Nagar"}},
+
+N:{wards:{
+117:"Rahul Nagar",
+118:"Vikhroli Village",
+119:"Damodar Park",
+120:"Sarvodaya Hospital",
+121:"Bhim Nagar",
+122:"Bhatwadi",
+123:"Chirag Nagar",
+124:"Kirol Village",
+125:"Pant Nagar",
+126:"Ramabai Nagar",
+127:"Garodia Nagar",
+128:"Kamraj Nagar"}},
+
+P:{wards:{
+29:"Manori – Madh Island",
+30:"Kharodi",
+31:"Evershine Nagar",
+32:"Mamalatdar Wadi",
+33:"Pushpa Park",
+34:"Tanaji Nagar",
+35:"Appa Pada",
+36:"Malad Hill",
+37:"Municipal Colony",
+38:"Koknipada",
+39:"Pathanwadi",
+40:"Dindoshi",
+41:"Markandi Pada",
+42:"Liberty Garden",
+43:"Collector Colony",
+44:"MHB Colony",
+45:"Bangur Nagar",
+46:"Pandurangwadi",
+47:"Aarey Colony",
+48:"Nirlon",
+49:"Unnat Nagar",
+50:"Patkar College",
+51:"Motilal Nagar",
+52:"Jawahar Nagar"}},
+
+R:{wards:{
+1:"IC Colony",
+2:"Dahisar East",
+3:"Ketakipada",
+4:"Vaishali Nagar",
+5:"Ashokvan",
+6:"Ambawadi",
+7:"Mandapeshwar",
+8:"Gorai",
+9:"Govind Nagar",
+10:"Daulat Nagar",
+11:"Tata Power",
+12:"Datta Pada",
+13:"Rajendra Nagar",
+14:"Borivali TPS",
+15:"Yogi Nagar",
+16:"Chikuwadi",
+17:"Charkop North",
+18:"Charkop South",
+19:"Industrial Estate",
+20:"Mahavir Nagar",
+21:"Chanakya Nagar",
+22:"Poisar West",
+23:"Poisar East",
+24:"Samata Nagar",
+25:"Damupada",
+26:"Mahindra",
+27:"Paras Nagar",
+28:"Irani Wadi"}},
+
+S:{wards:{
+104:"Milind Nagar",
+105:"Bhandup Village",
+106:"Gaondevi",
+107:"Nardas Nagar",
+108:"Bhattipada",
+109:"Hanuman Nagar",
+110:"CGS Quarters",
+111:"Kanjur Village",
+112:"Kannamwar Nagar",
+113:"Tagore Nagar",
+114:"Hariyali",
+115:"Tirandaz",
+116:"Vihar Lake"}},
+
+T:{wards:{
+98:"Mulund Colony",
+99:"ESIC Hospital",
+100:"Gavan Pada",
+101:"Palm Acres",
+102:"Mulund Central",
+103:"Nahur Village"}}
+};
+
+/* ============ JS LOGIC ============ */
+function loadWardNumbers(){
+  const letter=document.getElementById("wardLetter").value;
+  const box=document.getElementById("wardNumbers");
+  const info=document.getElementById("wardInfo");
+
+  box.innerHTML="";
+  info.innerHTML="<p>Select a ward number.</p>";
+  document.getElementById("wardInput").value=letter;
+
+  if(!wardData[letter]) return;
+
+  Object.keys(wardData[letter].wards).forEach(no=>{
+    const d=document.createElement("div");
+    d.className="ward-box";
+    d.innerText="Ward "+no;
+    d.onclick=()=>{
+      document.querySelectorAll(".ward-box").forEach(x=>x.classList.remove("active"));
+      d.classList.add("active");
+      document.getElementById("wardNoInput").value=no;
+      info.innerHTML="<b>"+wardData[letter].wards[no]+"</b>";
+    };
+    box.appendChild(d);
+  });
+}
+</script>
+
+</body>
+</html>

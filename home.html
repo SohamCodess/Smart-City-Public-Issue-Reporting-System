@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CityFix | Smart City Issue Reporting</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home.css') }}">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<header class="header">
+    <div class="logo">
+        🏙️ <span>CityFix</span>
+    </div>
+
+    <nav class="navbar">
+        <a href="{{ url_for('ward') }}">Ward</a>
+        <a href="{{ url_for('report_issue') }}">Report Issue</a>
+        <a href="{{ url_for('my_complaints') }}">My Complaints</a>
+
+        {% if username %}
+            <span class="user">👋 {{ username }}</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </nav>
+</header>
+
+<!-- MARQUEE -->
+<section class="marquee-section">
+    <div class="marquee-content">
+        <span class="marquee-item" id="citizens">👤 Citizens Registered: --</span>
+        <span class="marquee-item" id="issues">📝 Issues Registered: --</span>
+        <span class="marquee-item" id="solved">✅ Issues Solved: --</span>
+    </div>
+</section>
+
+
+<!-- WELCOME -->
+<section class="welcome">
+    {% if username %}
+        <h2>Welcome {{ username }} to Smart City Portal</h2>
+    {% else %}
+        <h2>Welcome to Smart City Portal</h2>
+    {% endif %}
+
+    <p>
+        Report public issues, track complaints, and help improve your ward.
+        Your participation makes the city smarter and cleaner.
+    </p>
+</section>
+
+<!-- SERVICES -->
+<section class="services">
+    <h2>Available Services</h2>
+    <div class="service-grid">
+        <div class="service-card">📢 Garbage Overflow</div>
+        <div class="service-card">📢 Potholes</div>
+        <div class="service-card">📢 Street Light Issues</div>
+        <div class="service-card">📢 Water Leakage</div>
+        <div class="service-card">📢 Traffic Signal Problem</div>
+        <div class="service-card">📢 Illegal Construction</div>
+        <div class="service-card">📢 Stray Animal Issue</div>
+        <div class="service-card">📢 Drainage Blockage</div>
+        <div class="service-card">📢 Open Manhole </div>
+        <div class="service-card">📢 Tree Fallen</div>
+        <div class="service-card">📢 Noise Pollution</div>
+        <div class="service-card">📢 Water Supply Issue</div>
+        <div class="service-card">📢 Public Toilet Issue</div>
+        <div class="service-card">📢 Road Encroachment </div>
+        <div class="service-card">📢 Electricity Issue</div>
+        <div class="service-card">📢 Other Civic Issues</div>
+    </div>
+</section>
+<section class="emergency-marquee">
+    <h2>Emergency Contacts</h2>
+  <div class="emergency-track">
+    <div class="emergency-content">
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='police.jpg') }}">
+        <span>Police <b>100</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='ambulance.jpg') }}">
+        <span>Ambulance <b>108</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='firebrigade.jpg') }}">
+        <span>Fire Brigade <b>101</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='ambulance.jpg') }}">
+        <span>Emergency Ambulance <b>108</b></span>
+      </div>
+
+      <!-- duplicate for smooth infinite loop -->
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='police.jpg') }}">
+        <span>Women-Helpline <b>1091</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='police.jpg') }}">
+        <span>Child-Helpline</span><b>1098</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='disaster.png') }}">
+        <span>Disaster Managment</span><b>1070</b></span>
+      </div>
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='cycber.jpg') }}">
+        <span>Cyber-Crime</span><b>1930</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='traffic.jpg') }}">
+        <span>Traffic-Police</span><b>103</b></span>
+      </div>
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='police.jpg') }}">
+        <span>Police <b>100</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='ambulance.jpg') }}">
+        <span>Ambulance <b>108</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='firebrigade.jpg') }}">
+        <span>Fire Brigade <b>101</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='ambulance.jpg') }}">
+        <span>Emergency Ambulance <b>108</b></span>
+      </div>
+
+      <!-- duplicate for smooth infinite loop -->
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='police.jpg') }}">
+        <span>Women-Helpline <b>1091</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='police.jpg') }}">
+        <span>Child-Helpline</span><b>1098</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='disaster.png') }}">
+        <span>Disaster Managment</span><b>1070</b></span>
+      </div>
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='cyber.jpg') }}">
+        <span>Cyber-Crime</span><b>1930</b></span>
+      </div>
+
+      <div class="emergency-item">
+        <img src="{{ url_for('static', filename='traffic.jpg') }}">
+        <span>Traffic-Police</span><b>103</b></span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+    Municipal Corporation of Mumbai © All Rights Reserved
+</footer>
+
+<script src="{{ url_for('static', filename='home.js') }}"></script>
+
+    
+
+</body>
+</html>

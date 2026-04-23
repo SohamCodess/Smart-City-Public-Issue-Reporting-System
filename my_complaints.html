@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CityFix | My Complaints</title>
+
+<style>
+body{
+  margin:0;
+  font-family:"Segoe UI",Arial,sans-serif;
+  background:#f4f6f8;
+  color:#333;
+}
+.header{
+  background:#1f3c88;
+  color:white;
+  padding:14px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+.logo{font-size:22px;font-weight:700;}
+.navbar a{
+  color:white;
+  text-decoration:none;
+  margin-left:18px;
+  font-weight:500;
+}
+.page{padding:28px;}
+h2{color:#1f3c88;margin-bottom:20px;}
+
+.stats-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:18px;
+  margin-bottom:30px;
+}
+.stat-card{
+  background:white;
+  padding:18px;
+  border-radius:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
+  text-align:center;
+}
+.stat-card h3{
+  margin:0;
+  font-size:26px;
+  color:#1f3c88;
+}
+.stat-card p{
+  margin:6px 0 0;
+  font-weight:600;
+}
+
+.complaint-card{
+  background:white;
+  padding:18px;
+  border-radius:14px;
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
+  margin-bottom:18px;
+}
+.complaint-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+}
+.complaint-id{
+  font-weight:700;
+  color:#1f3c88;
+}
+.status{
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:600;
+}
+.status.pending{background:#fff3cd;color:#856404;}
+.status.assigned{background:#d1ecf1;color:#0c5460;}
+.status.resolved{background:#d4edda;color:#155724;}
+
+.stages{
+  display:flex;
+  gap:12px;
+  margin-top:12px;
+}
+.stage{
+  flex:1;
+  padding:8px;
+  border-radius:8px;
+  font-size:13px;
+  text-align:center;
+  background:#e0e0e0;
+  font-weight:600;
+}
+.stage.done{
+  background:#1f3c88;
+  color:white;
+}
+
+.footer{
+  margin-top:40px;
+  background:#1f3c88;
+  color:white;
+  text-align:center;
+  padding:14px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="logo">🏙️ CityFix</div>
+
+  <nav class="navbar">
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('ward') }}">Ward</a>
+    <a href="{{ url_for('report_issue') }}">Report Issue</a>
+    <a href="{{ url_for('my_complaints') }}">My Complaints</a>
+
+    {% if username %}
+      <span>👋 {{ username }}</span>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    {% endif %}
+  </nav>
+</header>
+
+<div class="page">
+
+<h2>My Registered Complaints</h2>
+
+<!-- ================= STATS ================= -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <h3>{{ stats.total }}</h3>
+    <p>Total Complaints</p>
+  </div>
+  <div class="stat-card">
+    <h3>{{ stats.pending }}</h3>
+    <p>Pending</p>
+  </div>
+  <div class="stat-card">
+    <h3>{{ stats.assigned }}</h3>
+    <p>In Progress</p>
+  </div>
+  <div class="stat-card">
+    <h3>{{ stats.resolved }}</h3>
+    <p>Resolved</p>
+  </div>
+</div>
+
+<!-- ================= COMPLAINT LIST ================= -->
+{% if complaints|length == 0 %}
+  <p>No complaints registered yet.</p>
+{% endif %}
+
+{% for c in complaints %}
+<div class="complaint-card">
+
+  <div class="complaint-header">
+    <div class="complaint-id">Complaint #{{ c._id }}</div>
+
+    <div class="status
+      {% if c.status == 'Pending' %}pending
+      {% elif c.status == 'Assigned' %}assigned
+      {% else %}resolved{% endif %}">
+      {{ c.status }}
+    </div>
+  </div>
+
+  <div class="complaint-body">
+    <p><b>Issue:</b>
+      {{ c.issues | join("") if c.issues else "Not specified" }}
+    </p>
+
+    <p><b>Address:</b>
+      {{ c.address or "-" }}
+    </p>
+    <p><b>Landmark:</b>
+      {{c.Landmark or "-"}}
+    </p>
+
+    <p><b>Date:</b>
+      {{ c._id.generation_time.strftime("%d %b %Y") }}
+    </p>
+  </div>
+
+  <div class="stages">
+    <div class="stage {% if c.stage >= 1 %}done{% endif %}">Registered</div>
+    <div class="stage {% if c.stage >= 2 %}done{% endif %}">Assigned</div>
+    <div class="stage {% if c.stage >= 3 %}done{% endif %}">Resolved</div>
+  </div>
+
+</div>
+{% endfor %}
+
+</div>
+
+<footer class="footer">
+Municipal Corporation of Mumbai © All Rights Reserved
+</footer>
+
+</body>
+</html>

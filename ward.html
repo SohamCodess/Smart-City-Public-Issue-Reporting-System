@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CityFix | Mumbai Wards</title>
+<style>
+
+body{
+  margin:0;
+  font-family:"Segoe UI", Arial, sans-serif;
+  background:#f4f6f8;
+  color:#333;
+}
+
+/* ================= NAVBAR ================= */
+.header{
+  background:#1f3c88;
+  color:white;
+  padding:14px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+.logo{
+  font-size:22px;
+  font-weight:700;
+}
+.navbar a{
+  color:white;
+  text-decoration:none;
+  margin-left:18px;
+  font-weight:500;
+}
+.navbar a:hover{
+  text-decoration:underline;
+}
+
+/* ================= PAGE ================= */
+.page{
+  padding:28px;
+}
+.region-title{
+  margin:34px 0 14px;
+  font-size:20px;
+  font-weight:700;
+  color:#1f3c88;
+  border-left:5px solid #1f3c88;
+  padding-left:10px;
+}
+
+/* ================= GRID ================= */
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  gap:22px;
+}
+
+/* ================= CARD ================= */
+.ward-card{
+  background:white;
+  border-radius:14px;
+  border-color: #1f3c88;
+  overflow:hidden;
+  cursor:pointer;
+  box-shadow:0 6px 16px rgba(0,0,0,0.12);
+  transition:0.25s;
+  display:flex;
+  flex-direction:column;
+  height:260px;   /* 🔥 ALL cards same height */
+}
+.ward-card:hover{
+  transform:translateY(-6px);
+}
+
+/* IMAGE CONTAINER */
+.ward-card .map-box{
+  height:180px;
+  background:#eef4ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+/* IMAGE */
+.ward-card img{
+  width:100%;
+  height:100%;
+  object-fit:contain;   /* ❌ image cut nahi honar */
+}
+
+/* LABEL */
+.ward-card .label{
+  background:#1f3c88;
+  color:white;
+  text-align:center;
+  padding:12px;
+  font-weight:600;
+  margin-top:auto;
+}
+/* Ward Numbers container */
+.ward-numbers{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin:15px 0 30px;
+}
+
+/* Each ward box */
+.ward-box{
+  padding:10px 18px;
+  border:2px solid #1f3c88;
+  border-radius:8px;
+  background:#f4f7ff;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.25s;
+}
+
+/* Hover */
+.ward-box:hover{
+  background:#1f3c88;
+  color:#fff;
+}
+
+/* Active (clicked) */
+.ward-box.active{
+  background:#1f3c88;
+  color:white;
+}
+
+/* Ward info box */
+#wardInfo{
+  background:#fff;
+  padding:18px;
+  border-radius:10px;
+  box-shadow:0 6px 14px rgba(0,0,0,0.08);
+}
+
+
+/* ================= FOOTER ================= */
+.footer{
+  margin-top:50px;
+  background:#1f3c88;
+  color:white;
+  text-align:center;
+  padding:14px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="logo">
+        🏙️ <span>CityFix</span>
+    </div>
+
+    <nav class="navbar">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('ward') }}">Ward</a>
+        <a href="{{ url_for('report_issue') }}">Report Issue</a>
+        <a href="{{ url_for('my_complaints') }}">My Complaints</a>
+
+        {% if username %}
+            <span class="user">👋 {{ username }}</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </nav>
+</header>
+
+<div class="page">
+
+<h2>Mumbai Wards (Election-wise)</h2>
+
+<!-- SOUTH MUMBAI -->
+<div class="region-title">South Mumbai</div>
+<div class="card-grid">
+  <div class="ward-card" onclick="showNumbers('A')">
+    <img src="{{ url_for('static', filename='A.png') }}">
+    <div class="label">A Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('B')">
+    <img src="{{ url_for('static', filename='B.png') }}">
+    <div class="label">B Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('C')">
+    <img src="{{ url_for('static', filename='C.png') }}">
+    <div class="label">C Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('D')">
+    <img src="{{ url_for('static', filename='D.png') }}">
+    <div class="label">D Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('E')">
+    <img src="{{ url_for('static', filename='E.png') }}">
+    <div class="label">E Ward</div>
+  </div>
+</div>
+
+<!-- CENTRAL MUMBAI -->
+<div class="region-title">Central Mumbai</div>
+<div class="card-grid">
+  <div class="ward-card" onclick="showNumbers('F')">
+    <img src="{{ url_for('static', filename='F.png') }}">
+    <div class="label">F Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('G')">
+    <img src="{{ url_for('static', filename='G.png') }}">
+    <div class="label">G Ward</div>
+  </div>
+</div>
+
+<!-- CENTRAL WESTERN SUBURBS -->
+<div class="region-title">Central Western Suburbs</div>
+<div class="card-grid">
+  <div class="ward-card" onclick="showNumbers('H')">
+    <img src="{{ url_for('static', filename='H.png') }}">
+    <div class="label">H (West and East) Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('K')">
+    <img src="{{ url_for('static', filename='K.png') }}">
+    <div class="label">K (West, North, East) Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('P')">
+    <img src="{{ url_for('static', filename='P.png') }}">
+    <div class="label">P (North, South, East) Ward</div>
+  </div>
+</div>
+
+<!-- CENTRAL EASTERN SUBURBS -->
+<div class="region-title">Central Eastern Suburbs</div>
+<div class="card-grid">
+  <div class="ward-card" onclick="showNumbers('M')">
+    <img src="{{ url_for('static', filename='M.png') }}">
+    <div class="label">M (East and West) Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('N')">
+    <img src="{{ url_for('static', filename='N.png') }}">
+    <div class="label">N Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('S')">
+    <img src="{{ url_for('static', filename='S.png') }}">
+    <div class="label">S Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('L')">
+    <img src="{{ url_for('static', filename='L.png') }}">
+    <div class="label">L Ward</div>
+  </div>
+  <div class="ward-card" onclick="showNumbers('T')">
+    <img src="{{ url_for('static', filename='T.png') }}">
+    <div class="label">T Ward</div>
+  </div>
+</div>
+
+<!-- CENTRAL NORTHERN SUBURBS -->
+<div class="region-title">Central Northern Suburbs</div>
+<div class="card-grid">
+  <div class="ward-card" onclick="showNumbers('R')">
+    <img src="{{ url_for('static', filename='R.png') }}">
+    <div class="label">R (North, Central, South) Ward</div>
+  </div>
+</div>
+
+</div>
+<h3 style="margin-top:30px;" ;>Ward Numbers</h3>
+<div id="wardNumbers" class="ward-numbers"></div>
+
+<h3>Ward Information</h3>
+<div id="wardInfo">
+  <p>Select a ward number.</p>
+</div>
+
+</div>
+
+<footer class="footer">
+Municipal Corporation of Mumbai © All Rights Reserved
+</footer>
+
+<script>
+const wardData = {
+  A: {
+    name: "Ward A",
+    wards: {
+      224: "Mahatma Phule Market – Churchgate – Museum – Indira Docks",
+      225: "Brabourm Stadium – Colaba Market – Gateway of India",
+      226: "Sasoon Docks – World Trade Centre – Geeta Nagar",
+      227: "R.C. Church – Colaba Dandi – Navy Nagar"
+    }
+  },
+
+  B: {
+    name: "Ward B",
+    wards: {
+      221: "Imamwada – Dongri",
+      222: "Bengalipura – Princess Dock",
+      223: "Musafir Khana – Victoria Docks"
+    }
+  },
+
+  C: {
+    name: "Ward C",
+    wards: {
+      217: "Durgadevi Udyan – Madhav Baug – Bhuleshwar",
+      218: "Chandanwadi – Chirabazar – Gymkhanas",
+      219: "Mumbadevi – Mulji Jetha Market – Dhobi Talao",
+      220: "Khara Talao – Null Bazar – Ghoghari Mohalla"
+    }
+  },
+
+  D: {
+    name: "Ward D",
+    wards: {
+      210: "Bellasis Chawls – Navjivan Society",
+      211: "Wellington Sports Club – Bhatia Hospital",
+      212: "Mahalaxmi – Air Conditioned Market – Oomar Park",
+      213: "Priya Darshani Garden – August Kranti Maidan",
+      214: "Kamla Nehru Park – Raj Bhavan",
+      215: "Prarthana Samaj – Opera House",
+      216: "Harkisandas N. Hospital – Khetwadi"
+    }
+  },
+
+  E: {
+    name: "Ward E",
+    wards: {
+      202: "Veer Jijamata Udyan – Ghodapdeo – Mazagaon Docks (N)",
+      203: "Kasturba Hospital – India United Mills",
+      204: "Byculla Railway Station – Municipal Housing Quarters",
+      205: "Nair Hospital – Byculla Fire Brigade",
+      206: "Mazagaon Court – Madanpura",
+      207: "Anjirwadi – Dockyards – Mazagaon Docks (S)",
+      208: "Mastan Tank – J.J. Hospital – Vikrikar Bhavan",
+      209: "Kamathipura"
+    }
+  },
+
+  F: {
+    name: "Ward F",
+    wards: {
+      165: "Pratiksha Nagar – Sion",
+      166: "Salt Pans – Sion Transit Camp",
+      167: "Lokmanya Tilak Hospital – Shanmukhanand",
+      168: "Rawli Hill",
+      169: "C.G.S Colony Sector VII",
+      170: "C.G.S Colony – Antop Hill",
+      171: "Sangam Nagar",
+      172: "Korba Mithagar – Wadala Saltpans",
+      173: "Lepers’ Home – B.P.T Hospital Colony",
+      174: "Hindu Colony – Parsi Colony",
+      195: "Ranjeet Studio – Naigaum B.D.D Chawls",
+      196: "Naigaum Police Parade Ground – B.P.T Hospital",
+      197: "Mahatma Gandhi Hospital – Bhoiwada",
+      198: "Indian United Mills – Nare Park",
+      199: "K.E.M Hospital – Raj Kamal Studio",
+      200: "Veterinary Hospital – Abhyudaya Nagar",
+      201: "Cotton Green – Sewri Fort"
+    }
+  },
+
+  G: {
+    name: "Ward G",
+    wards: {
+      175: "Mahim Kala Killa",
+      176: "Dharavi – Transit Camp",
+      177: "Kakkaiyadevi Temple – Mukund Nagar",
+      178: "Western India Tanneries",
+      179: "Mahim Sonapur – Labour Camp",
+      180: "Estrella Batteries – Rajarshi Shahu Nagar",
+      181: "Mahim Fort – Mahim Police Quarters",
+      182: "Shitladevi Temple – Hinduja Hospital",
+      183: "Ruparel College – Matunga Workshop",
+      184: "Kamgar Krida Kendra – Dadar Station",
+      185: "Ravindra Natyamandir – Shivaji Park",
+      186: "S.T Depot – Railway Workshop",
+      187: "T.V Centre – Prabhadevi",
+      188: "Worli Village",
+      189: "Worli Dairy – Sasmira",
+      190: "Worli B.D.D Chawls",
+      191: "Gandhi Nagar – Dawn Mills",
+      192: "Mahalaxmi Race Course – Nehru Planetarium",
+      193: "Shanti Nagar – Arthur Road Jail",
+      194: "Parel B.D.D Chawls"
+    }
+  },
+
+  H: {
+    name: "Ward H",
+    wards: {
+      81: "Prabhat Colony – Anand Nagar",
+      82: "Vivekanand Nagar",
+      83: "University Campus – Dharmacy Colony",
+      84: "Kalina Village – Santacruz Cantonment",
+      85: "Bharat Nagar (E)",
+      86: "TPS III – Santacruz Ashok Nagar",
+      87: "Dowri Colony – Khar Rifle Range",
+      88: "Teacher’s Colony – Jawahar Nagar",
+      89: "Govt Colony – Bharat Nagar (W)",
+      90: "Bandra Terminus – Nirmal Nagar",
+      91: "Kherwadi",
+      92: "Khira Nagar – Saraswat Colony",
+      93: "Vithaldas Nagar – Madhu Park",
+      94: "Khar Danda – Chuim Village",
+      95: "Union Park – National College",
+      96: "Bandra Fort – Pali Market",
+      97: "Lilavati Hospital – Bandra Bus Terminus"
+    }
+  },
+
+  K: {
+    name: "Ward K",
+    wards: {
+      53: "Oshiwara – Bandivli",
+      54: "Tarapore Garden",
+      55: "Swami Samarth Nagar",
+      56: "Versova (N)",
+      57: "Adarsh Nagar – Amboli Hill",
+      58: "Sahaji Raje Sports Complex",
+      59: "Seven Bunglows – Versova (S)",
+      60: "Manish Nagar – Bhavan’s College",
+      61: "Gilbert Hill – Andheri Market",
+      62: "Lallubhai Park",
+      63: "Bhaktivedanta Mandir – Cooper Hospital",
+      64: "S.N.D.T University – Juhu Airport",
+      65: "Vile Parle (W) – Mithibai College",
+      66: "Bandrekar Wadi – Ismail Yusuf College",
+      67: "Jogeshwari Caves – Majaswadi",
+      68: "Shivneri Vasahat – Meghwadi",
+      69: "Shankarwadi – Parsi Panchayat",
+      70: "Squatter’s Colony – Tolani College",
+      71: "Gundavli Gaonthan (W)",
+      72: "Gundavli (E) – ESIS Hospital",
+      73: "Vyaravli – MIDC",
+      74: "Vijaynagar – Bhavani Nagar",
+      75: "Sahar Airport – Maroshi",
+      76: "Chakala – Sahar Airport",
+      77: "Sahar Village – Bamanwada",
+      78: "M.V College – Coal Dongari",
+      79: "Tejpal Scheme – Vile Parle (E)",
+      80: "Vile Parle (E) Telephone Exchange"
+    }
+  },
+
+  L: {
+    name: "Ward L",
+    wards: {
+      150: "Tungve Village – Chandivli (W)",
+      151: "Chandivli (E)",
+      152: "Mohili Village",
+      153: "Kajupada Hill – Asalpha",
+      154: "Kamani Industries – Saki Naka",
+      155: "Jari Mari",
+      156: "Premier Automobiles – Home Guards",
+      157: "Wadia Estate – Premier Colony",
+      158: "Kurla Village – Dayanand School",
+      159: "Vinoba Bhave Nagar",
+      160: "Kurla Terminus – Kamgar Nagar",
+      161: "Shikshak Nagar",
+      162: "Nehru Nagar – Bhabha Hospital",
+      163: "Kasai Wada – Everard Nagar",
+      164: "Swadesh Mill – Eye Hospital"
+    }
+  },
+
+  M: {
+    name: "Ward M",
+    wards: {
+      129: "Lotus Colony – Rafiq Nagar",
+      130: "Shivaji Nagar No.1",
+      131: "Baiganwadi",
+      132: "Shivaji Nagar No.2 (W)",
+      133: "Shivaji Nagar No.2 (E)",
+      134: "Mankhurd – Mandala",
+      135: "Chitta Camp",
+      136: "Anushakti Nagar – BARC",
+      137: "New Gautam Nagar",
+      138: "Deonar Slaughter House",
+      139: "Deonar Village – Children’s Home",
+      140: "RCF Township",
+      141: "Adarsh Nagar – Anik",
+      142: "Anik – Mahul Villages",
+      143: "Suman Nagar – Sindhi Society",
+      144: "Siddharth Colony – Basant Park",
+      145: "Sahakar Nagar",
+      146: "Subhash Nagar – Beggars Home",
+      147: "Borla – Ghatla",
+      148: "Jyoti Nagar – Rahul Nagar",
+      149: "Tilak Nagar – Chedda Nagar"
+    }
+  },
+
+  P: {
+    name: "Ward P",
+    wards: {
+      29: "Manori – Marve – Aksa – Madh Island",
+      30: "Valnai – Kharodi",
+      31: "Adarsh Dugdhalaya – Evershine Nagar",
+      32: "Bhadaran Nagar – Mamalatdar Wadi",
+      33: "Pushpa Park",
+      34: "Tanaji Nagar",
+      35: "Appa Pada",
+      36: "Malad Hill Reservoir",
+      37: "Municipal Colony Malad (E)",
+      38: "Dhanjiwadi – Koknipada",
+      39: "Pimpri Pada – Pathanwadi",
+      40: "Raheja Complex – Dindoshi",
+      41: "Markandi Pada",
+      42: "Liberty Garden – Nadiadwala",
+      43: "New Collector Colony",
+      44: "MHB Colony",
+      45: "Bangur Nagar – Sunder Nagar",
+      46: "Dindoshi – Pandurangwadi",
+      47: "Aarey Colony",
+      48: "Nirlon – Jaiprakash Nagar",
+      49: "Unnat Nagar – Motilal Nagar",
+      50: "Patkar College – Shastri Nagar",
+      51: "Motilal Nagar No.1",
+      52: "Siddharth Nagar – Jawahar Nagar"
+    }
+  },
+
+  R: {
+    name: "Ward R",
+    wards: {
+      1: "Kandarpada – IC Colony",
+      2: "Gaondevi – Dahisar (E)",
+      3: "Ketakipada – Shailendra Nagar",
+      4: "Vaishali Nagar",
+      5: "Ashokvan – Chintamani Nagar",
+      6: "Ambavadi – Ovari Pada",
+      7: "Mandapeshwar",
+      8: "Gorai – MHADA Colony",
+      9: "Govind Nagar",
+      10: "Daulat Nagar",
+      11: "Bansi Nagar – Tata Power",
+      12: "Datta Pada",
+      13: "Rajendra Nagar",
+      14: "Borivali TPS – Korakendra",
+      15: "Eskar – Yogi Nagar",
+      16: "Chikuwadi – MHADA Colony",
+      17: "Charkop (N)",
+      18: "Charkop (S)",
+      19: "Charkop Industrial Estate",
+      20: "Mahavir Nagar – Dahanukarwadi",
+      21: "Narane Sanskrutik Centre",
+      22: "Poisur Village (W)",
+      23: "Poisur (E)",
+      24: "Samata Nagar – Dattani Park",
+      25: "Damupada",
+      26: "Samata Nagar – Mahindra",
+      27: "Devji Bhimji Colony",
+      28: "Irani Wadi – Kandivali (W)"
+    }
+  },
+
+  S: {
+    name: "Ward S",
+    wards: {
+      104: "Milind Nagar – Gaondevi Hills",
+      105: "Bhandup Village",
+      106: "Gaondevi (Bhandup)",
+      107: "Nardas Nagar",
+      108: "Kokan Nagar – Bhattipada",
+      109: "Hanuman Nagar – Farid Nagar",
+      110: "Datar Colony – CGS Quarters",
+      111: "Kanjur Village",
+      112: "Kannamwar Nagar",
+      113: "Tagore Nagar",
+      114: "Hariyali Village – Godrej Colony",
+      115: "Aden Bungalows – Tirandaz",
+      116: "Vihar Lake – Powai Lake"
+    }
+  },
+
+  T: {
+    name: "Ward T",
+    wards: {
+      98: "Mulund Colony – Tulsi Lake",
+      99: "Mulund Check Naka – ESIC Hospital",
+      100: "Topiwala College – Gavan Pada",
+      101: "Nane Pada – Palm Acres",
+      102: "Mulund Central",
+      103: "Johnson & Johnson – Nahur"
+    }
+  }
+};
+
+
+function showNumbers(letter){
+  const div = document.getElementById("wardNumbers");
+  const info = document.getElementById("wardInfo");
+
+  div.innerHTML = "";
+  info.innerHTML = "<p>Select a ward number.</p>";
+
+  if(!wardData[letter]){
+    div.innerHTML = "<p>No data found.</p>";
+    return;
+  }
+
+  Object.keys(wardData[letter].wards).forEach(n => {
+    const b = document.createElement("div");
+    b.className = "ward-box";
+    b.innerText = "Ward " + n;
+
+    b.onclick = () => {
+      document.querySelectorAll(".ward-box")
+        .forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+
+      /* ✅ STEP 1: HARD-CODED AREA (AS IT IS) */
+      info.innerHTML = `
+        <h4>${wardData[letter].name} – Ward ${n}</h4>
+        <p><b>Area:</b> ${wardData[letter].wards[n]}</p>
+      
+      `;
+
+      /* ✅ STEP 2: EXTRA INFO FROM DB */
+      fetch(`/ward-data/${letter}/${n}`)
+        .then(res => res.json())
+        .then(data => {
+          info.innerHTML += `
+            <hr>
+            <p><b>MP:</b> ${data.mp || "Not Available"}</p>
+            <p><b>MLA:</b> ${data.mla || "Not Available"}</p>
+            <p><b>Corporator:</b> ${data.corporator || "Not Available"}</p>
+            <p><b>BMC Office:</b> ${data.bmc_office || "Not Available"}</p>
+          `;
+        })
+        .catch(err => {
+          info.innerHTML += "<p>Extra ward info not found.</p>";
+        });
+    };
+
+    div.appendChild(b);
+  });
+}
+</script>
+
+
+</body>
+</html>
+
+
